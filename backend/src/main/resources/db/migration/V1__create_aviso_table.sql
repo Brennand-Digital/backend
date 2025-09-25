@@ -1,0 +1,4 @@
+CREATE TABLE aviso (
+    id VARCHAR(36) PRIMARY KEY,
+    aviso VARCHAR(255) NOT NULL
+);
