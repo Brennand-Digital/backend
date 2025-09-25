@@ -1,4 +1,4 @@
-package Domain.Aviso;
+package com.brennandDigital.Projeto.Domain.Aviso;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

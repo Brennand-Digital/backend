@@ -1,12 +1,10 @@
-package Services;
+package com.brennandDigital.Projeto.Services;
 
-import Domain.Aviso.Aviso;
-import Repositories.AvisoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
+import com.brennandDigital.Projeto.Domain.Aviso.Aviso;
+import com.brennandDigital.Projeto.Repositories.AvisoRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import Services.Exceptions.ResourceNotFoundException;
+import com.brennandDigital.Projeto.Services.Exceptions.ResourceNotFoundException;
 
 
 import java.util.List;
@@ -15,8 +13,11 @@ import java.util.Optional;
 @Service
 public class AvisoServices {
 
-    @Autowired
-    private AvisoRepository avisoRepository;
+    private final AvisoRepository avisoRepository;
+
+    public AvisoServices(AvisoRepository avisoRepository){
+        this.avisoRepository = avisoRepository;
+    }
 
     public List<Aviso> getAllAvisos(){
         return avisoRepository.findAll();
@@ -42,7 +43,7 @@ public class AvisoServices {
         throw new Exception("Aviso não encontrado com o ID: " + avisoId);
     }
 
-    public void deleteOrder(String avisoId){
+    public void deleteAviso(String avisoId){
         try{
             avisoRepository.deleteById(avisoId);
         }
