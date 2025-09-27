@@ -1,6 +1,6 @@
 package com.brennandDigital.Projeto.Services;
 
-import com.brennandDigital.Projeto.Domain.Aviso.Aviso;
+import com.brennandDigital.Projeto.Domain.Aviso;
 import com.brennandDigital.Projeto.Repositories.AvisoRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,9 @@ public class AvisoServices {
 
         if(avisoOpt.isPresent()){
             Aviso aviso = findAvisoById(avisoId);
-            aviso.setAviso(avisoDetails.getAviso());
+            aviso.setDescricao(avisoDetails.getDescricao());
+            aviso.setTitulo(avisoDetails.getTitulo());
+            aviso.setDate(avisoDetails.getDate());
             return avisoRepository.save(aviso);
         }
         throw new Exception("Aviso não encontrado com o ID: " + avisoId);

@@ -1,6 +1,6 @@
 package com.brennandDigital.Projeto.Controllers;
 
-import com.brennandDigital.Projeto.Domain.Aviso.Aviso;
+import com.brennandDigital.Projeto.Domain.Aviso;
 import com.brennandDigital.Projeto.Services.AvisoServices;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

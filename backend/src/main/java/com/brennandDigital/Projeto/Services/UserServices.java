@@ -1,6 +1,6 @@
 package com.brennandDigital.Projeto.Services;
 
-import com.brennandDigital.Projeto.Domain.Aviso.User;
+import com.brennandDigital.Projeto.Domain.User;
 import com.brennandDigital.Projeto.Repositories.UserRepository;
 import com.brennandDigital.Projeto.Services.Exceptions.ResourceNotFoundException;
 import org.springframework.dao.EmptyResultDataAccessException;

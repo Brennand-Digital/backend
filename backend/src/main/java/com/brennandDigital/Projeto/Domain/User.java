@@ -1,4 +1,4 @@
-package com.brennandDigital.Projeto.Domain.Aviso;
+package com.brennandDigital.Projeto.Domain;
 
 
 import jakarta.persistence.*;

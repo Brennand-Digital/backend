@@ -1,6 +1,6 @@
 package com.brennandDigital.Projeto.Repositories;
 
-import com.brennandDigital.Projeto.Domain.Aviso.User;
+import com.brennandDigital.Projeto.Domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

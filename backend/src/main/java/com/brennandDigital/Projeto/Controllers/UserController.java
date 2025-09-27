@@ -1,6 +1,6 @@
 package com.brennandDigital.Projeto.Controllers;
 
-import com.brennandDigital.Projeto.Domain.Aviso.User;
+import com.brennandDigital.Projeto.Domain.User;
 import com.brennandDigital.Projeto.Services.UserServices;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
