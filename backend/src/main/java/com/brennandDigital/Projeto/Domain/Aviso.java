@@ -32,6 +32,6 @@ public class Aviso implements Serializable {
 {
     "descricao": "",
     "titulo": "",
-    "data": ""
+    "date": ""
 }
  */

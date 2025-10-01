@@ -37,6 +37,7 @@ public class UserServices {
         if(userOpt.isPresent()){
             User user = findUserId(userId);
             user.setUserName(userDetails.getUserName());
+            user.setPassword(userDetails.getPassword());
             return userRepository.save(user);
         }
         throw new ResourceNotFoundException("Usuário não encontrado com o ID: " + userId);
