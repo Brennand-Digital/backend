@@ -32,16 +32,13 @@ public class AvisoServices {
     }
 
     public Aviso updateAviso(String avisoId, Aviso avisoDetails) throws Exception {
-        Optional<Aviso> avisoOpt = avisoRepository.findById(avisoId);
+       Aviso aviso= avisoRepository
+               .findById(avisoId).orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o ID: " + avisoId));
 
-        if(avisoOpt.isPresent()){
-            Aviso aviso = findAvisoById(avisoId);
             aviso.setDescricao(avisoDetails.getDescricao());
             aviso.setTitulo(avisoDetails.getTitulo());
             aviso.setDate(avisoDetails.getDate());
             return avisoRepository.save(aviso);
-        }
-        throw new Exception("Aviso não encontrado com o ID: " + avisoId);
     }
 
     public void deleteAviso(String avisoId){
