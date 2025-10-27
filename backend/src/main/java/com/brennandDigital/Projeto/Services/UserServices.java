@@ -3,6 +3,7 @@ package com.brennandDigital.Projeto.Services;
 import com.brennandDigital.Projeto.Domain.User;
 import com.brennandDigital.Projeto.Repositories.UserRepository;
 import com.brennandDigital.Projeto.Services.Exceptions.ResourceNotFoundException;
+import org.springframework.context.annotation.Bean;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
