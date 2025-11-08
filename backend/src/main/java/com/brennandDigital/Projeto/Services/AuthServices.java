@@ -17,14 +17,14 @@ public class AuthServices {
         this.userRepository = userRepository;
     }
 
-    public boolean checkLogin(String username, String password) {
-        if (username == null || username.isBlank()) {
-            throw new ResourceNotFoundException("O campo 'nome de usuário' é obrigatório.");
+    public boolean checkLogin(String email, String password) {
+        if (email == null || email.isBlank()) {
+            throw new ResourceNotFoundException("O campo 'email' é obrigatório.");
         }
 
         User user = userRepository
-                .findByUserName(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o nome: " + username));
+                .findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o email: " + email));
 
         if (password == null || password.isBlank()) {
             throw new ResourceNotFoundException("O campo 'senha' é obrigatório.");

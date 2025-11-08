@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 public class UserServices {
@@ -31,9 +32,19 @@ public class UserServices {
         return user.orElseThrow(() -> new ResourceNotFoundException(userId));
     }
 
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(
+            "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+    );
+
     public User createUser(User userDetails){
         if (userDetails.getUserName() == null || userDetails.getUserName().isBlank()) {
             throw new ResourceNotFoundException("O campo 'nome de usuário' é obrigatório.");
+        }
+        if (userDetails.getEmail() == null || userDetails.getEmail().isBlank()) {
+            throw new ResourceNotFoundException("O campo 'email' é obrigatório.");
+        }
+        if (!EMAIL_PATTERN.matcher(userDetails.getEmail()).matches()) {
+            throw new IllegalArgumentException("O formato de e-mail informado é inválido.");
         }
         if (userDetails.getPassword() == null || userDetails.getPassword().isBlank()) {
             throw new ResourceNotFoundException("O campo 'nome de usuário' é obrigatório.");
@@ -65,5 +76,9 @@ public class UserServices {
 
     public Optional<User> findByUserName(String gabriel) {
         return userRepository.findByUserName(gabriel);
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }

@@ -24,12 +24,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User userid){
         try{
-            boolean success = authServices.checkLogin(userid.getUserName(), userid.getPassword());
+            boolean success = authServices.checkLogin(userid.getEmail(), userid.getPassword());
             if(success){
                 return ResponseEntity.ok("Login bem-sucedido");
             }
             else {
-                return ResponseEntity.badRequest().body("Login ou senha inválidos");
+                return ResponseEntity.badRequest().body("Email ou senha inválidos");
             }
         }
         catch (Exception e){

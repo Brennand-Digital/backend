@@ -29,67 +29,67 @@ class AuthServicesTest {
     @Test
     void shouldReturnTrueWhenLoginIsValid() {
         User user = new User();
-        user.setUserName("gabriel");
+        user.setEmail("gabriel@email.com");
         user.setPassword(passwordEncoder.encode("1234"));
 
-        when(userRepository.findByUserName("gabriel")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail("gabriel@email.com")).thenReturn(Optional.of(user));
 
-        boolean result = authServices.checkLogin("gabriel", "1234");
+        boolean result = authServices.checkLogin("gabriel@email.com", "1234");
 
         assertTrue(result);
-        verify(userRepository, times(1)).findByUserName("gabriel");
+        verify(userRepository, times(1)).findByEmail("gabriel@email.com");
     }
 
     @Test
-    void shouldThrowWhenUsernameIsNull() {
+    void shouldThrowWhenEmailIsNull() {
         assertThrows(ResourceNotFoundException.class, () -> authServices.checkLogin(null, "1234"));
-        verify(userRepository, never()).findByUserName(anyString());
+        verify(userRepository, never()).findByEmail(anyString());
     }
 
     @Test
-    void shouldThrowWhenUsernameIsBlank() {
+    void shouldThrowWhenEmailIsBlank() {
         assertThrows(ResourceNotFoundException.class, () -> authServices.checkLogin("   ", "1234"));
-        verify(userRepository, never()).findByUserName(anyString());
+        verify(userRepository, never()).findByEmail(anyString());
     }
 
     @Test
     void shouldThrowWhenUserNotFound() {
-        when(userRepository.findByUserName("gabriel")).thenReturn(Optional.empty());
+        when(userRepository.findByEmail("gabriel@email.com")).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> authServices.checkLogin("gabriel", "1234"));
-        verify(userRepository, times(1)).findByUserName("gabriel");
+        assertThrows(ResourceNotFoundException.class, () -> authServices.checkLogin("gabriel@email.com", "1234"));
+        verify(userRepository, times(1)).findByEmail("gabriel@email.com");
     }
 
     @Test
     void shouldThrowWhenPasswordIsNull() {
         User user = new User();
-        user.setUserName("gabriel");
+        user.setEmail("gabriel@email.com");
         user.setPassword(passwordEncoder.encode("1234"));
 
-        when(userRepository.findByUserName("gabriel")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail("gabriel@email.com")).thenReturn(Optional.of(user));
 
-        assertThrows(ResourceNotFoundException.class, () -> authServices.checkLogin("gabriel", null));
+        assertThrows(ResourceNotFoundException.class, () -> authServices.checkLogin("gabriel@email.com", null));
     }
 
     @Test
     void shouldThrowWhenPasswordIsBlank() {
         User user = new User();
-        user.setUserName("gabriel");
+        user.setEmail("gabriel@email.com");
         user.setPassword(passwordEncoder.encode("1234"));
 
-        when(userRepository.findByUserName("gabriel")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail("gabriel@email.com")).thenReturn(Optional.of(user));
 
-        assertThrows(ResourceNotFoundException.class, () -> authServices.checkLogin("gabriel", "   "));
+        assertThrows(ResourceNotFoundException.class, () -> authServices.checkLogin("gabriel@email.com", "   "));
     }
 
     @Test
     void shouldThrowWhenPasswordIsIncorrect() {
         User user = new User();
-        user.setUserName("gabriel");
+        user.setEmail("gabriel@email.com");
         user.setPassword(passwordEncoder.encode("1234"));
 
-        when(userRepository.findByUserName("gabriel")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail("gabriel@email.com")).thenReturn(Optional.of(user));
 
-        assertThrows(IllegalArgumentException.class, () -> authServices.checkLogin("gabriel", "senhaErrada"));
+        assertThrows(IllegalArgumentException.class, () -> authServices.checkLogin("gabriel@email.com", "senhaErrada"));
     }
 }
