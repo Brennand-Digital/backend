@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS aviso (
+    id VARCHAR(36) PRIMARY KEY,
+    descricao VARCHAR(255) NOT NULL,
+    titulo VARCHAR(255) NOT NULL,
+    date TIMESTAMP NOT NULL
+);
