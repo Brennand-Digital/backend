@@ -21,12 +21,17 @@ public class User implements Serializable {
 
     private String userName;
 
+    @Column(unique = true, nullable = false)
+    private String email;
+
+
     private String password;
 }
 
 /*
 {
     "userName": "",
+    "email": "",
     "password": ""
 }
  */

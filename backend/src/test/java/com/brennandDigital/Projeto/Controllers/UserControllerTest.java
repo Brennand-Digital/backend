@@ -1,68 +1,138 @@
-package com.brennandDigital.Projeto.Controllers;
+package com.brennandDigital.Projeto.Services;
 
 import com.brennandDigital.Projeto.Domain.User;
-import com.brennandDigital.Projeto.Services.UserServices;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.brennandDigital.Projeto.Repositories.UserRepository;
+import com.brennandDigital.Projeto.Services.Exceptions.ResourceNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.*;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@WebMvcTest(UserController.class)
 class UserControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Mock
+    private UserRepository userRepository;
 
-    @MockitoBean
+    @InjectMocks
     private UserServices userService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Test
-    void shouldReturnAllUsers() throws Exception {
-        List<User> mockUsers = List.of(
-                new User("1", "Gabriel", "123"),
-                new User("2", "Maria", "abc")
-        );
-        when(userService.getAllUsers()).thenReturn(mockUsers);
-
-        mockMvc.perform(get("/users"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].userName").value("Gabriel"))
-                .andExpect(jsonPath("$[1].userName").value("Maria"));
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void shouldReturnUserById() throws Exception {
-        User mockUser = new User("1", "Gabriel", "123");
-        when(userService.findUserId("1")).thenReturn(mockUser);
+    void shouldReturnAllUsers() {
+        User user1 = new User("1", "Gabriel", "gabriel@email.com", "senha1");
+        User user2 = new User("2", "Maria", "maria@email.com", "senha2");
 
-        mockMvc.perform(get("/users/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userName").value("Gabriel"));
+        when(userRepository.findAll()).thenReturn(List.of(user1, user2));
+
+        List<User> result = userService.getAllUsers();
+
+        assertEquals(2, result.size());
+        verify(userRepository, times(1)).findAll();
     }
 
     @Test
-    void shouldCreateNewUser() throws Exception {
-        User newUser = new User(null, "João", "senha123");
-        User savedUser = new User("99", "João", "senha123");
-        when(userService.createUser(newUser)).thenReturn(savedUser);
+    void shouldReturnUserById() {
+        User user = new User("1", "Gabriel", "gabriel@email.com", "senha");
+        when(userRepository.findById("1")).thenReturn(Optional.of(user));
 
-        mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newUser)))
-                .andExpect(status().isCreated()) // ⬅ status corrigido
-                .andExpect(jsonPath("$.userName").value("João"));
+        User result = userService.findUserId("1");
+
+        assertEquals("Gabriel", result.getUserName());
+    }
+
+    @Test
+    void shouldThrowWhenUserIdNotFound() {
+        when(userRepository.findById("1")).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> userService.findUserId("1"));
+    }
+
+    @Test
+    void shouldCreateUser() {
+        User user = new User("1", "Gabriel", "gabriel@email.com", "senha");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        User result = userService.createUser(user);
+
+        assertNotNull(result);
+        assertEquals("Gabriel", result.getUserName());
+        assertEquals("gabriel@email.com", result.getEmail());
+        assertNotEquals("senha", result.getPassword()); // deve estar criptografada
+        verify(userRepository, times(1)).save(user);
+    }
+
+    @Test
+    void shouldThrowWhenCreateUserWithBlankUsername() {
+        User user = new User(null, "  ", "teste@email.com", "senha");
+
+        assertThrows(ResourceNotFoundException.class, () -> userService.createUser(user));
+    }
+
+    @Test
+    void shouldThrowWhenCreateUserWithBlankPassword() {
+        User user = new User(null, "Gabriel", "teste@email.com", "  ");
+
+        assertThrows(ResourceNotFoundException.class, () -> userService.createUser(user));
+    }
+
+    @Test
+    void shouldThrowWhenCreateUserWithInvalidEmail() {
+        User user = new User(null, "Gabriel", "email-invalido", "senha");
+
+        assertThrows(ResourceNotFoundException.class, () -> userService.createUser(user));
+    }
+
+    @Test
+    void shouldUpdateUser() throws Exception {
+        User existing = new User("1", "Gabriel", "gabriel@email.com", "senhaAntiga");
+        User updated = new User("1", "Gabriel Atualizado", "gabriel.atualizado@email.com", "senhaNova");
+
+        when(userRepository.findById("1")).thenReturn(Optional.of(existing));
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        User result = userService.updateUser("1", updated);
+
+        assertEquals("Gabriel Atualizado", result.getUserName());
+        assertEquals("gabriel.atualizado@email.com", result.getEmail());
+        assertNotEquals("senhaNova", result.getPassword()); // deve estar criptografada
+        verify(userRepository, times(1)).save(existing);
+    }
+
+    @Test
+    void shouldDeleteUser() {
+        doNothing().when(userRepository).deleteById("1");
+
+        assertDoesNotThrow(() -> userService.deleteUser("1"));
+        verify(userRepository, times(1)).deleteById("1");
+    }
+
+    @Test
+    void shouldThrowWhenDeleteUserNotFound() {
+        doThrow(new EmptyResultDataAccessException(1)).when(userRepository).deleteById("1");
+
+        assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser("1"));
+    }
+
+    @Test
+    void shouldFindByUserName() {
+        User user = new User("1", "Gabriel", "gabriel@email.com", "senha");
+        when(userRepository.findByUserName("Gabriel")).thenReturn(Optional.of(user));
+
+        Optional<User> result = userService.findByUserName("Gabriel");
+
+        assertTrue(result.isPresent());
+        assertEquals("Gabriel", result.get().getUserName());
     }
 }
