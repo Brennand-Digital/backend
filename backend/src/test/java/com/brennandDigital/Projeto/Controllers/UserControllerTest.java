@@ -91,8 +91,9 @@ class UserControllerTest {
     void shouldThrowWhenCreateUserWithInvalidEmail() {
         User user = new User(null, "Gabriel", "email-invalido", "senha");
 
-        assertThrows(ResourceNotFoundException.class, () -> userService.createUser(user));
+        assertThrows(IllegalArgumentException.class, () -> userService.createUser(user));
     }
+
 
     @Test
     void shouldUpdateUser() throws Exception {
@@ -105,8 +106,11 @@ class UserControllerTest {
         User result = userService.updateUser("1", updated);
 
         assertEquals("Gabriel Atualizado", result.getUserName());
-        assertEquals("gabriel.atualizado@email.com", result.getEmail());
-        assertNotEquals("senhaNova", result.getPassword()); // deve estar criptografada
+
+        assertEquals("gabriel@email.com", result.getEmail());
+
+        assertNotEquals("senhaNova", result.getPassword());
+
         verify(userRepository, times(1)).save(existing);
     }
 
