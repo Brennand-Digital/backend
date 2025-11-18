@@ -37,7 +37,7 @@ class AuthControllerTest {
     @Test
     void shouldReturnSuccessWhenLoginIsCorrect() throws Exception {
         User user = new User();
-        user.setUserName("usuario");
+        user.setEmail("usuario");
         user.setPassword("senha123");
 
         when(authServices.checkLogin("usuario", "senha123")).thenReturn(true);
@@ -52,7 +52,7 @@ class AuthControllerTest {
     @Test
     void shouldReturnBadRequestWhenLoginIsInvalid() throws Exception {
         User user = new User();
-        user.setUserName("usuario");
+        user.setEmail("usuario");
         user.setPassword("senhaErrada");
 
         when(authServices.checkLogin("usuario", "senhaErrada")).thenReturn(false);
@@ -61,13 +61,13 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Login ou senha inválidos"));
+                .andExpect(content().string("Email ou senha inválidos"));
     }
 
     @Test
     void shouldReturnBadRequestWhenExceptionThrown() throws Exception {
         User user = new User();
-        user.setUserName("usuario");
+        user.setEmail("usuario");
         user.setPassword("senha123");
 
         when(authServices.checkLogin(anyString(), anyString()))
