@@ -28,17 +28,20 @@ public class AvisoServices {
     }
 
     public Aviso createAviso(Aviso aviso){
+        if (aviso.getDate() == null) {
+            aviso.setDate(java.time.LocalDateTime.now());
+        }
         return avisoRepository.save(aviso);
     }
 
     public Aviso updateAviso(String avisoId, Aviso avisoDetails) throws Exception {
-       Aviso aviso= avisoRepository
+       Aviso aviso = avisoRepository
                .findById(avisoId).orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o ID: " + avisoId));
 
-            aviso.setDescricao(avisoDetails.getDescricao());
-            aviso.setTitulo(avisoDetails.getTitulo());
-            aviso.setDate(avisoDetails.getDate());
-            return avisoRepository.save(aviso);
+        aviso.setDescricao(avisoDetails.getDescricao());
+        aviso.setTitulo(avisoDetails.getTitulo());
+        // NÃO alterar o campo date!
+        return avisoRepository.save(aviso);
     }
 
     public void deleteAviso(String avisoId){

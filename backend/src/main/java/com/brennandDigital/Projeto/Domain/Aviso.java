@@ -24,6 +24,13 @@ public class Aviso implements Serializable {
     @Column(nullable = false)
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime date;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.date == null) {
+            this.date = LocalDateTime.now();
+        }
+    }
 }
 
 /*
